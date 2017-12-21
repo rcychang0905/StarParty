@@ -1,26 +1,54 @@
-import Joi from 'joi';
 
-// require and configure dotenv, will load vars in .env in PROCESS.ENV
-require('dotenv').config();
+// Hierarchical node.js configuration with command-line arguments, environment
+// variables, and files.
+const nconf = module.exports = require('nconf');
+const path = require('path');
 
-// define validation for all the env vars
-const envVarsSchema = Joi.object({
-  NODE_ENV: Joi.string()
-    .allow(['development', 'production', 'test', 'provision'])
-    .default('development'),
-  PORT: Joi.number()
-    .default(3000)
-}).unknown()
-  .required();
+nconf
+// 1. Command-line arguments
+  .argv()
+  // 2. Environment variables
+  .env([
+    'DATA_BACKEND',
+    'GCLOUD_PROJECT',
+    'INSTANCE_CONNECTION_NAME',
+    'MYSQL_USER',
+    'MYSQL_PASSWORD',
+    'NODE_ENV',
+    'PORT'
+  ])
+  // 3. Config file
+  .file({ file: path.join(__dirname, '../config.json') })
+  // 4. Defaults
+  .defaults({
+    // dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
+    // configure the appropriate settings for each storage engine below.
+    // If you are unsure, use datastore as it requires no additional
+    // configuration.
+    DATA_BACKEND: 'cloudsql',
 
-const { error, value: envVars } = Joi.validate(process.env, envVarsSchema);
-if (error) {
-  throw new Error(`Config validation error: ${error.message}`);
+    // This is the id of your project in the Google Cloud Developers Console.
+    GCLOUD_PROJECT: '',
+
+    MYSQL_USER: '',
+    MYSQL_PASSWORD: '',
+
+    PORT: 3000
+  });
+
+// Check for required settings
+checkConfig('GCLOUD_PROJECT');
+
+if (nconf.get('DATA_BACKEND') === 'cloudsql') {
+  checkConfig('MYSQL_USER');
+  checkConfig('MYSQL_PASSWORD');
+  if (nconf.get('NODE_ENV') === 'production') {
+    checkConfig('INSTANCE_CONNECTION_NAME');
+  }
 }
 
-const config = {
-  env: envVars.NODE_ENV,
-  port: envVars.PORT
-};
-
-export default config;
+function checkConfig(setting) {
+  if (!nconf.get(setting)) {
+    throw new Error(`You must set ${setting} as an environment variable or in config.json!`);
+  }
+}
