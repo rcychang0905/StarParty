@@ -5,12 +5,19 @@ import del from 'del';
 import runSequence from 'run-sequence';
 
 const plugins = gulpLoadPlugins();
+const currentEnvironment = plugins.environments.development() ? 'development' : 'production';
 
 const paths = {
   js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**'],
-  nonJs: ['./package.json', './.gitignore', './config.json'],
+  nonJs: ['./package.json', './.gitignore'],
+  config: {
+    development: ['./config_dev.json'],
+    production: ['./config_prod.json'],
+  },
   tests: './server/tests/*.js'
 };
+
+plugins.util.log('Build environment for: ', plugins.util.colors.magenta(currentEnvironment));
 
 // Clean up dist and coverage directory
 gulp.task('clean', () =>
@@ -20,6 +27,13 @@ gulp.task('clean', () =>
 // Copy non-js files to dist
 gulp.task('copy', () =>
   gulp.src(paths.nonJs)
+    .pipe(plugins.newer('dist'))
+    .pipe(gulp.dest('dist'))
+);
+
+gulp.task('copy_config', () =>
+  gulp.src(paths.config[currentEnvironment])
+    .pipe(plugins.rename('config.json'))
     .pipe(plugins.newer('dist'))
     .pipe(gulp.dest('dist'))
 );
@@ -50,11 +64,11 @@ gulp.task('nodemon', ['copy', 'babel'], () =>
 );
 
 // gulp serve for development
-gulp.task('serve', ['clean'], () => runSequence('nodemon'));
+gulp.task('serve', ['clean', 'copy_config'], () => runSequence('nodemon'));
 
 // default task: clean dist, compile js files and copy non-js files.
 gulp.task('default', ['clean'], () => {
   runSequence(
-    ['copy', 'babel']
+    ['copy', 'copy_config', 'babel']
   );
 });

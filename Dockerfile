@@ -1,7 +1,7 @@
 # take default image of node boron i.e  node 6.x
-FROM node:6.10.1
+FROM node:9.3.0
 
-MAINTAINER Kunal Kapadia <kunalkapadia12@gmail.com>
+MAINTAINER Ronnie Chang <rcychang0905@gmail.com>
 
 # create app directory in container
 RUN mkdir -p /app
@@ -19,8 +19,10 @@ RUN yarn --pure-lockfile
 # copy all file from current dir to /app in container
 COPY . /app/
 
-# expose port 4040
+# expose port 3000
 EXPOSE 3000
+
+ENV NODE_ENV production
 
 # cmd to start service
 CMD [ "yarn", "start" ]
