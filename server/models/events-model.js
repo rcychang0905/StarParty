@@ -1,45 +1,14 @@
-import pool from '../helpers/cloudsql';
+import getConnection from '../helpers/cloudsql';
 
 export {
   list,
-  add,
-  read
+  add
 };
 
-function list(cb) {
-  pool.getConnection((err, connection) => {
-    connection.query('SELECT * FROM Events', (err, results) => {
-      connection.release();
-      if (err) throw err;
-      cb(err, results);
-    });
-  });
+function list() {
+  return getConnection('SELECT * FROM Events');
 }
 
-function add(data, cb) {
-  pool.getConnection((err, connection) => {
-    connection.query('INSERT INTO Events SET ?', data, (err, res) => {
-      connection.release();
-      if (err) {
-        cb(err);
-        return;
-      }
-      read(res.insertId, cb);
-    });
-  });
+function add(data) {
+  return getConnection('INSERT INTO Events SET ?', data);
 }
-
-function read(id, cb) {
-  pool.getConnection((err, connection) => {
-    connection.query(
-      'SELECT * FROM Events WHERE `eventID` = ?', id, (err, res) => {
-        connection.release();
-        if (err) {
-          cb(err);
-          return;
-        }
-        cb(null, res[0]);
-      });
-  });
-}
-

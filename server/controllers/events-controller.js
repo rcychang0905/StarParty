@@ -6,22 +6,22 @@ export {
 };
 
 function list(req, res) {
-  eventsModel.list((err, entities) => {
-    if (err) {
-      res.status(500).send(err.Error);
-    } else {
-      res.json(entities);
-    }
-  });
+  eventsModel.list()
+    .then(entities =>
+      res.json(entities)
+    )
+    .catch(err =>
+      res.status(500).send(err)
+    );
 }
 
 function add(req, res) {
-  eventsModel.add(req.body, (err, entity) => {
-    if (err) {
-      res.status(500).send(err);
-    } else {
-      res.json(entity);
-    }
-  });
+  eventsModel.add()
+    .then(entities =>
+      res.json(entities)
+    )
+    .catch(err =>
+      res.status(500).send(err)
+    );
 }
 
