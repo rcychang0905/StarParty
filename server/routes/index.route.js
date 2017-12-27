@@ -10,6 +10,8 @@ router.get('/health-check', (req, res) =>
 
 router.get('/events', eventsController.list);
 
-router.post('/:events', eventsController.add);
+router.get('/events/:id', eventsController.getEventById);
+
+router.post('/events', eventsController.addEntryForEvent);
 
 export default router;
