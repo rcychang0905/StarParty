@@ -3,6 +3,7 @@ import getConnection from '../helpers/cloudsql';
 export {
   list,
   getEventById,
+  getEventLocationById,
   addEntryForEvent
 };
 
@@ -15,8 +16,12 @@ function list() {
     'FROM MainTable');
 }
 
-function getEventById(data) {
-  return getConnection('SELECT * FROM Events WHERE EventID = ?', data);
+function getEventById(id) {
+  return getConnection('SELECT * FROM Events WHERE EventID = ?', id);
+}
+
+function getEventLocationById(id) {
+  return getConnection('SELECT DISTINCT userName, GPS FROM Events WHERE EventID = ?', id);
 }
 
 function addEntryForEvent(data) {

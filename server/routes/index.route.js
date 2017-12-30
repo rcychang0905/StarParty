@@ -12,6 +12,8 @@ router.get('/events', eventsController.list);
 
 router.get('/events/:id', eventsController.getEventById);
 
+router.get('/events/location/:id', eventsController.getEventLocationById);
+
 router.post('/events', eventsController.addEntryForEvent);
 
 export default router;
