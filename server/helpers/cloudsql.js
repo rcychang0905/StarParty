@@ -1,7 +1,7 @@
 import mysql from 'mysql';
 import config from '../../config/config';
 
-const Promise = require('bluebird'); // eslint-disable-line no-global-assign
+import Promise from 'bluebird';
 
 Promise.promisifyAll(mysql);
 Promise.promisifyAll(require('mysql/lib/Connection').prototype);

@@ -15,7 +15,8 @@ nconf
     'MYSQL_USER',
     'MYSQL_PASSWORD',
     'NODE_ENV',
-    'PORT'
+    'PORT',
+    'CLOUD_BUCKET'
   ])
   // 3. Config file
   .file({ file: path.join(__dirname, '../config.json') })

@@ -17,7 +17,7 @@ function list() {
 }
 
 function getEventById(id) {
-  return getConnection('SELECT * FROM Events WHERE EventID = ?', id);
+  return getConnection('SELECT eventID, userName, people, mood, userPhone, date, memo FROM Events WHERE EventID = ?', id);
 }
 
 function getEventLocationById(id) {
