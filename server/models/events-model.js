@@ -1,13 +1,14 @@
 import getConnection from '../helpers/cloudsql';
 
 export {
-  list,
+  getAllEvent,
+  getCurrentEvent,
   getEventById,
   getEventLocationById,
   addEntryForEvent
 };
 
-function list() {
+function getAllEvent() {
   return getConnection('SELECT MainTable.*,\n' +
     '       (SELECT COALESCE(SUM(Events.people), 0)\n' +
     '        FROM Events\n' +
@@ -16,12 +17,21 @@ function list() {
     'FROM MainTable');
 }
 
+function getCurrentEvent() {
+  return getConnection('SELECT MainTable.*,\n' +
+    '       (SELECT COALESCE(SUM(Events.people), 0)\n' +
+    '        FROM Events\n' +
+    '        WHERE MainTable.eventID = Events.eventID\n' +
+    '       ) AS total_attendance\n' +
+    'FROM MainTable WHERE MainTable.current = 1');
+}
+
 function getEventById(id) {
-  return getConnection('SELECT eventID, userName, people, mood, userPhone, date, memo, photo1, photo2, photo3 FROM Events WHERE EventID = ?', id);
+  return getConnection('SELECT * FROM Events WHERE EventID = ?', id);
 }
 
 function getEventLocationById(id) {
-  return getConnection('SELECT DISTINCT userName, GPS FROM Events WHERE EventID = ?', id);
+  return getConnection('SELECT DISTINCT id, userName, GPS FROM Events WHERE EventID = ?', id);
 }
 
 function addEntryForEvent(data) {

@@ -3,7 +3,9 @@ import * as eventsController from '../controllers/events-controller';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.get('/', eventsController.list);
+router.get('/', eventsController.getAllEvent);
+
+router.get('/current', eventsController.getCurrentEvent);
 
 router.get('/:id', eventsController.getEventById);
 

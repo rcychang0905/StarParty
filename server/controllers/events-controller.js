@@ -3,14 +3,25 @@ import * as eventsModel from '../models/events-model';
 import * as images from '../helpers/images';
 
 export {
-  list,
+  getAllEvent,
+  getCurrentEvent,
   getEventById,
   getEventLocationById,
   addEntryForEvent
 };
 
-function list(req, res) {
-  eventsModel.list()
+function getAllEvent(req, res) {
+  eventsModel.getAllEvent()
+    .then(entities =>
+      res.json(entities)
+    )
+    .catch(err =>
+      res.status(500).send(err)
+    );
+}
+
+function getCurrentEvent(req, res) {
+  eventsModel.getCurrentEvent()
     .then(entities =>
       res.json(entities)
     )
