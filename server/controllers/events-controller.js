@@ -52,11 +52,9 @@ function getEventLocationById(req, res) {
 
 function addEntryForEvent(req, res) {
   images.multer(req, res)
-    .then(() => {
-      const newReq = _.extend({}, req);
-      addImageForEvent(newReq);
-      return newReq;
-    })
+    .then(() =>
+      images.sendUploadToGCS(req)
+    )
     .then((newReq) => {
       eventsModel.addEntryForEvent(newReq.body)
         .then(entities =>
@@ -69,9 +67,5 @@ function addEntryForEvent(req, res) {
     .catch(err =>
       res.status(500).send({err: err.message})
     );
-}
-
-function addImageForEvent(req) {
-  return images.sendUploadToGCS(req);
 }
 
